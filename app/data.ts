@@ -6,7 +6,7 @@ export const links = {
 
 export const experience = [
   {
-    period: "Mar 2026 — Present",
+    period: "Mar 2026 — Aug 2026",
     role: "Full-Stack Engineer Intern",
     company: "Vestel",
     summary: "Contributing to full-stack applications using C#, ASP.NET Core, Angular, Vue.js, PostgreSQL, SQL Server, and REST APIs.",
