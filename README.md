@@ -19,4 +19,3 @@ pnpm build
 ```
 
 The site is configured for root-level hosting at `https://ton4ee.github.io`. Pushes to `main` deploy automatically through GitHub Actions.
-
