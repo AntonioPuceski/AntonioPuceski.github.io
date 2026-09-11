@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
 const page = await readFile(new URL("../app/portfolio.tsx", import.meta.url), "utf8");
-const layout = await readFile(new URL("../app/layout.tsx", import.meta.url), "utf8");
+const index = await readFile(new URL("../index.html", import.meta.url), "utf8");
 const data = await readFile(new URL("../app/data.ts", import.meta.url), "utf8");
 
 test("contains the complete recruiter-facing information architecture", () => {
@@ -15,8 +15,8 @@ test("contains the complete recruiter-facing information architecture", () => {
 });
 
 test("publishes accurate metadata and verified projects", () => {
-  assert.match(layout, /Antonio Puceski \| Software Engineer/);
-  assert.match(layout, /https:\/\/ton4ee\.github\.io/);
+  assert.match(index, /Antonio Puceski \| Software Engineer/);
+  assert.match(index, /https:\/\/antoniopuceski\.github\.io/);
   for (const project of ["GymTracker", "Personal Finance Manager", "Smart Incident Detection", "Split Settle", "Computer Vision Sensor Hub"]) {
     assert.match(data, new RegExp(project));
   }

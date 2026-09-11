@@ -1,6 +1,6 @@
 # Antonio Puceski — Portfolio
 
-Personal software-engineering portfolio for [Antonio Puceski](https://github.com/Ton4ee), built with React, TypeScript, and Vite.
+Personal software-engineering portfolio for [Antonio Puceski](https://github.com/AntonioPuceski), built with React, TypeScript, and Vite.
 
 ## Local development
 
@@ -18,4 +18,4 @@ pnpm test
 pnpm build
 ```
 
-The site is configured for root-level hosting at `https://ton4ee.github.io`. Pushes to `main` deploy automatically through GitHub Actions.
+The site is configured for root-level hosting at `https://antoniopuceski.github.io`. Pushes to `master` deploy automatically through GitHub Actions.

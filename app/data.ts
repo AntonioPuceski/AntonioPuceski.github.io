@@ -1,5 +1,5 @@
 export const links = {
-  github: "https://github.com/Ton4ee",
+  github: "https://github.com/AntonioPuceski",
   linkedin: "https://www.linkedin.com/in/antonio-puceski-9911b1239/",
   email: "mailto:puceskia@gmail.com",
 };
@@ -34,14 +34,14 @@ export const projects = [
     purpose: "A dependable API for organising fitness data and tracking progress.",
     description: "Supports exercise discovery, reusable workout plans, completed sessions, favourites, body-weight history, dashboard summaries, and synchronisation with the WGER exercise API.",
     stack: ["C#", ".NET 10", "ASP.NET Core", "EF Core", "PostgreSQL"],
-    github: "https://github.com/Ton4ee/GymTracker",
+    github: "https://github.com/AntonioPuceski/GymTracker",
   },
   {
     index: "02", name: "Personal Finance Manager", type: "Full-stack application", accent: "blue",
     purpose: "A clear way to record transactions and understand personal cash flow.",
     description: "Provides transaction create, edit, and delete workflows, date-range filtering, dynamic balances, category summaries, and income-versus-expense visualisations.",
     stack: ["Java", "Spring Boot", "React", "TypeScript", "PostgreSQL"],
-    github: "https://github.com/Ton4ee/-personal-finance-manager",
+    github: "https://github.com/AntonioPuceski/-personal-finance-manager",
     live: "https://personal-finance-manager-black.vercel.app/",
   },
   {
@@ -49,21 +49,21 @@ export const projects = [
     purpose: "An end-to-end prototype for classifying suspicious network traffic.",
     description: "Preprocesses traffic data, trains and persists a Random Forest model, serves predictions through FastAPI, and presents class probabilities in a React dashboard.",
     stack: ["Python", "scikit-learn", "FastAPI", "React", "Recharts"],
-    github: "https://github.com/Ton4ee/Smart-Incident-Detection-Dashboard-",
+    github: "https://github.com/AntonioPuceski/Smart-Incident-Detection-Dashboard-",
   },
   {
     index: "04", name: "Split Settle", type: "Collaborative web app", accent: "mint",
     purpose: "A lightweight tool for tracking shared costs and settling group balances.",
     description: "Creates shareable groups, records participants and expenses, calculates balances, suggests settlements, and synchronises changes through a Supabase-backed data layer.",
     stack: ["React", "TypeScript", "Supabase", "PostgreSQL", "Vitest"],
-    github: "https://github.com/Ton4ee/Split-Settle-App",
+    github: "https://github.com/AntonioPuceski/Split-Settle-App",
   },
   {
     index: "05", name: "Computer Vision Sensor Hub", type: "Computer vision", accent: "orange",
     purpose: "An experimental camera interface for human gestures and head direction.",
     description: "Uses face and hand landmarks to recognise hand gestures, smiles, winks, eye closure, and head movement, with modes, event logging, and gesture counters.",
     stack: ["Python", "OpenCV", "MediaPipe"],
-    github: "https://github.com/Ton4ee/Python-camera-sensor-project",
+    github: "https://github.com/AntonioPuceski/Python-camera-sensor-project",
   },
 ];
 

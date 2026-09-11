@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://ton4ee.github.io/sitemap.xml
+Sitemap: https://antoniopuceski.github.io/sitemap.xml
