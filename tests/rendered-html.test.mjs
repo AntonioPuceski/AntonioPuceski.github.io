@@ -20,5 +20,5 @@ test("publishes accurate metadata and verified projects", () => {
   for (const project of ["GymTracker", "Personal Finance Manager", "Smart Incident Detection", "Split Settle", "Computer Vision Sensor Hub"]) {
     assert.match(data, new RegExp(project));
   }
-  assert.match(page, /Expected completion: September 2026/);
+  assert.doesNotMatch(page, /Expected completion: September 2026/);
 });
