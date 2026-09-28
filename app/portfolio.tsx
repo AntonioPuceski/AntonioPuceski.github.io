@@ -1,110 +1,128 @@
-"use client";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { experience, links, projects, skills, type ProjectVisual } from "./data";
 
-import { useEffect, useState } from "react";
-import { experience, links, projects, skills } from "./data";
+const navigation = [["projects", "Work"], ["experience", "Experience"], ["about", "About"], ["contact", "Contact"]];
+const filters = ["All work", "Software", "Applied AI"] as const;
 
-const nav = ["About", "Experience", "Projects", "Skills", "Contact"];
+function Arrow({ down = false }: { down?: boolean }) {
+  return <svg className={down ? "arrow down" : "arrow"} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true"><path d="M5 19 19 5M5 5h14v14" /></svg>;
+}
 
-function ExternalLink({ href, children, className = "" }: { href: string; children: React.ReactNode; className?: string }) {
-  return <a className={className} href={href} target="_blank" rel="noreferrer">{children}<span aria-hidden="true"> ↗</span></a>;
+function ExternalLink({ href, children, className = "" }: { href: string; children: ReactNode; className?: string }) {
+  return <a className={className} href={href} target="_blank" rel="noreferrer">{children}<Arrow /><span className="sr-only"> (opens in a new tab)</span></a>;
+}
+
+function ProjectArtwork({ kind }: { kind: ProjectVisual }) {
+  if (kind === "network") return <div className="artwork network-art" aria-hidden="true">
+    <div className="artwork-label"><span className="tiny-dot" /> MODEL → APPLICATION <span>01 / ML</span></div>
+    <svg viewBox="0 0 560 250" className="network-drawing" fill="none">
+      <g stroke="currentColor" opacity=".28"><path d="m60 64 130 60L60 194m0-70 130 0 94-75m-94 75 94 0m-94 0 94 75m0-150 92 75m-92 0h92m-92 75 92-75h105" /></g>
+      <g fill="var(--diagram-node)" stroke="currentColor"><circle cx="60" cy="64" r="11"/><circle cx="60" cy="124" r="11"/><circle cx="60" cy="194" r="11"/><circle cx="190" cy="124" r="22"/><circle cx="284" cy="49" r="13"/><circle cx="284" cy="124" r="13"/><circle cx="284" cy="199" r="13"/><circle cx="376" cy="124" r="24"/></g>
+      <circle className="signal-pulse" cx="376" cy="124" r="34" stroke="currentColor" opacity=".25"/>
+      <rect x="451" y="89" width="75" height="70" rx="12" fill="var(--diagram-node)" stroke="currentColor"/>
+      <path d="M469 140v-15m12 15v-30m12 30v-22m12 22V99" stroke="currentColor" strokeWidth="4"/>
+    </svg>
+    <div className="pipeline-labels"><span>Traffic features</span><span>Random Forest</span><span>Prediction</span></div>
+    <div className="artwork-bottom"><span>TRAIN → SERVE → EXPLAIN</span><span>System overview</span></div>
+  </div>;
+  if (kind === "fitness") return <div className="artwork fitness-art" aria-hidden="true"><div className="artwork-label">GYMTRACKER<span>02 / SOFTWARE</span></div><div className="workout-illustration"><span className="mini-label">THE WORKOUT CYCLE</span><div className="workout-line"><span>01</span><b>Plan the session</b><i>↗</i></div><div className="workout-line"><span>02</span><b>Log the work</b><i>↗</i></div><div className="workout-line"><span>03</span><b>See the progress</b><i>↗</i></div></div><div className="artwork-bottom"><span>PLAN / TRAIN / TRACK</span><span>Workflow overview</span></div></div>;
+  if (kind === "finance") return <div className="artwork finance-art" aria-hidden="true"><div className="artwork-label">PERSONAL FINANCE<span>03 / SOFTWARE</span></div><div className="finance-illustration"><div className="chart-key"><span><i/>Income</span><span><i/>Expenses</span></div><div className="chart-bars">{[38,65,48,78,60,88,72].map((height,i) => <div key={height}><i style={{height: height+"%"}}/><i style={{height:(height * .6 + i * 2)+"%"}}/></div>)}</div></div><div className="artwork-bottom"><span>TRANSACTIONS → PERSPECTIVE</span><span>Illustrative data</span></div></div>;
+  if (kind === "vision") return <div className="artwork vision-art" aria-hidden="true"><div className="artwork-label">SENSOR HUB<span>04 / VISION</span></div><svg className="vision-drawing" viewBox="0 0 500 210" fill="none"><path d="M128 55V25h35m174 0h35v30m0 100v30h-35m-174 0h-35v-30" stroke="currentColor" opacity=".5"/><path d="m207 162-29-50q-9-20 4-20l26 29-12-73q-2-15 9-14l20 77-1-90q0-15 11-13l12 100 10-77q2-15 12-10l-1 92 17-59q4-13 14-6l-12 102-27 33z" stroke="currentColor" opacity=".55"/><g stroke="currentColor" strokeWidth="1.5"><path d="m231 171-23-50-26-24m49 74-12-74-13-54m25 128 12-70-8-82m-4 152 32-66 4-72m-36 138 51-61 11-45m-85 56 11-24 24 4 20 4 19 5"/></g><g fill="currentColor">{[[231,171],[208,121],[182,97],[219,97],[206,43],[243,101],[235,19],[263,105],[267,33],[282,110],[293,65]].map(([cx,cy])=><circle key={cx} cx={cx} cy={cy} r="4"/>)}</g></svg><div className="artwork-bottom"><span>CAMERA → LANDMARKS → GESTURE</span><span>Tracking illustration</span></div></div>;
+  return <div className="artwork settle-art" aria-hidden="true"><div className="artwork-label">SPLIT SETTLE<span>05 / SOFTWARE</span></div><div className="settle-illustration"><span className="person-node">A</span><span className="person-node">B</span><span className="person-node">C</span><svg viewBox="0 0 360 140" fill="none"><path d="M55 8v55h250V8M180 8v116" stroke="currentColor" opacity=".4"/><circle cx="180" cy="63" r="5" fill="currentColor"/></svg><strong>One shared balance.</strong></div><div className="artwork-bottom"><span>SHARE / CALCULATE / SETTLE</span><span>Workflow overview</span></div></div>;
 }
 
 export function Portfolio() {
-  const [dark, setDark] = useState(false);
+  const [dark, setDark] = useState(() => document.documentElement.dataset.theme === "dark");
   const [menu, setMenu] = useState(false);
-
-  useEffect(() => {
-    const saved = localStorage.getItem("antonio-theme");
-    const preferred = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    // Theme preference is necessarily read after hydration.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setDark(saved ? saved === "dark" : preferred);
-  }, []);
+  const [filter, setFilter] = useState<(typeof filters)[number]>("All work");
+  const menuButton = useRef<HTMLButtonElement>(null);
+  const visibleProjects = projects.filter(project => filter === "All work" || project.category === filter);
 
   useEffect(() => {
     document.documentElement.dataset.theme = dark ? "dark" : "light";
-    localStorage.setItem("antonio-theme", dark ? "dark" : "light");
+    try { localStorage.setItem("antonio-theme", dark ? "dark" : "light"); } catch { /* Themes also work when storage is unavailable. */ }
   }, [dark]);
 
-  return (
-    <>
-      <a className="skip-link" href="#main">Skip to content</a>
-      <header className="site-header">
-        <a className="wordmark" href="#top" aria-label="Antonio Puceski, home"><span>AP</span><strong>Antonio Puceski</strong></a>
-        <button className="menu-button" aria-expanded={menu} aria-controls="navigation" onClick={() => setMenu(!menu)}>{menu ? "Close" : "Menu"}</button>
-        <nav id="navigation" className={menu ? "nav open" : "nav"} aria-label="Main navigation">
-          {nav.map(item => <a key={item} href={`#${item.toLowerCase()}`} onClick={() => setMenu(false)}>{item}</a>)}
-          <button className="theme-button" onClick={() => setDark(!dark)} aria-label={`Switch to ${dark ? "light" : "dark"} theme`}><span aria-hidden="true">{dark ? "☀" : "◐"}</span></button>
-          <a className="nav-cv" href={links.email + "?subject=CV%20request"}>Request CV</a>
+  useEffect(() => {
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && menu) { setMenu(false); menuButton.current?.focus(); }
+    };
+    document.addEventListener("keydown", closeOnEscape);
+    return () => document.removeEventListener("keydown", closeOnEscape);
+  }, [menu]);
+
+  return <>
+    <a className="skip-link" href="#main">Skip to content</a>
+    <header className="site-header">
+      <div className="wrap header-inner">
+        <a className="wordmark" href="#top" aria-label="Antonio Puceski, home">antonio<span>.</span><span className="wordmark-surname">puceski</span></a>
+        <nav id="navigation" className={menu ? "navigation is-open" : "navigation"} aria-label="Main navigation">
+          {navigation.map(([id, label]) => <a key={id} href={"#"+id} onClick={() => setMenu(false)}>{label}</a>)}
         </nav>
-      </header>
+        <div className="header-actions">
+          <button className="theme-button" onClick={() => setDark(!dark)} aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}>
+            {dark ? <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 1v3m0 16v3M1 12h3m16 0h3M4 4l2 2m12 12 2 2M4 20l2-2M18 6l2-2"/></svg> : <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M20 15.7A8.6 8.6 0 0 1 8.3 4a8.6 8.6 0 1 0 11.7 11.7Z"/></svg>}
+          </button>
+          <a href={links.email} className="header-contact">Let’s talk <Arrow /></a>
+          <button ref={menuButton} className="menu-button" aria-expanded={menu} aria-controls="navigation" onClick={() => setMenu(!menu)}>{menu ? "Close" : "Menu"}<span aria-hidden="true">{menu ? "−" : "+"}</span></button>
+        </div>
+      </div>
+    </header>
 
-      <main id="main">
-        <section className="hero" id="top">
-          <div className="hero-grid wrap">
-            <div className="hero-copy reveal">
-              <p className="eyebrow"><span></span> Software Engineer · Skopje, North Macedonia</p>
-              <h1>Engineering software<br />that works <em>clearly.</em></h1>
-              <p className="hero-lead">I’m Antonio Puceski, a software engineer building reliable full-stack applications, backend systems, and software integrations.</p>
-              <p className="hero-support">I work across REST APIs, relational databases, modern frontend applications, background services, software integrations, and practical AI.</p>
-              <div className="hero-actions">
-                <a className="button primary" href="#projects">View my work <span aria-hidden="true">↓</span></a>
-                <a className="button secondary" href={links.email + "?subject=CV%20request"}>Request CV</a>
-              </div>
-              <div className="social-links"><ExternalLink href={links.github}>GitHub</ExternalLink><ExternalLink href={links.linkedin}>LinkedIn</ExternalLink></div>
-            </div>
-            <div className="portrait-wrap reveal" aria-label="Portrait of Antonio Puceski">
-              <div className="portrait-halo"></div>
-              <img src="/antonio-puceski-portrait.png" alt="Antonio Puceski, software engineer" width="900" height="1125" fetchPriority="high" />
-              <div className="portrait-card"><span className="status-dot"></span><div><small>Current focus</small><strong>Full-stack & backend engineering</strong></div></div>
-            </div>
+    <main id="main">
+      <section className="hero wrap" id="top" aria-labelledby="hero-heading">
+        <div className="hero-topline"><p className="eyebrow">SOFTWARE ENGINEER / APPLIED AI</p><span className="availability"><span/>Open to opportunities</span></div>
+        <div className="hero-grid">
+          <div className="hero-copy">
+            <h1 id="hero-heading">Thoughtful<br/>software.<br/><em>Practical AI.</em></h1>
+            <p className="hero-intro">I’m Antonio. I build understandable systems<br className="desktop-break"/> and put machine learning to work.</p>
+            <p className="hero-support">Software engineering graduate with experience in .NET applications, integrations, and quality assurance. Exploring what thoughtful engineering and applied AI can do together.</p>
+            <div className="hero-actions"><a className="button button-primary" href="#projects">Explore my work <Arrow down/></a><a className="text-link" href="#experience">My experience <Arrow/></a></div>
           </div>
-          <div className="hero-tech wrap" aria-label="Core technologies"><span>C# / .NET</span><span>Java / Spring</span><span>TypeScript</span><span>React · Angular · Vue</span><span>PostgreSQL</span></div>
-        </section>
-
-        <section className="section about" id="about">
-          <div className="wrap two-col">
-            <div><p className="section-kicker">01 / About</p><h2>A practical engineer with a product mindset.</h2></div>
-            <div className="about-copy">
-              <p className="large">I contribute to maintainable full-stack applications and software integration systems across backend APIs, data layers, and modern frontend frameworks.</p>
-              <p>My professional experience spans C# and ASP.NET Core services, Angular and Vue.js applications, PostgreSQL and SQL Server, background processing, external integrations, reporting, and software quality assurance.</p>
-              <p>I focus on reliable data handling, clear validation, useful documentation, and close collaboration with developers and stakeholders. Alongside .NET and Java systems, I build practical AI and computer-vision projects with Python.</p>
-              <div className="principles"><span>Reliable by design</span><span>Clear to maintain</span><span>Built for real needs</span></div>
+          <div className="hero-aside">
+            <div className="portrait-frame">
+              <div className="portrait-grid" aria-hidden="true"/>
+              <span className="portrait-cross" aria-hidden="true">+</span>
+              <img src="/antonio-puceski-portrait.png" alt="Antonio Puceski" width="1024" height="1536" fetchPriority="high"/>
+              <div className="portrait-caption"><span>ANTONIO PUCESKI</span><span>SKOPJE, MK ↗</span></div>
             </div>
+            <div className="focus-note"><span className="focus-symbol" aria-hidden="true">↔</span><div><span className="mini-label">WHERE MY INTERESTS MEET</span><strong>Software & intelligence.</strong></div><span className="focus-spark" aria-hidden="true">✳</span></div>
           </div>
-        </section>
+        </div>
+        <div className="hero-bottom"><p>Built on fundamentals.<br/><strong>Driven by curiosity.</strong></p><div className="hero-technologies" aria-label="Core technologies"><span>C# / .NET</span><span>Python</span><span>TypeScript</span><span>Java</span><span>SQL</span></div><a href="#projects" className="scroll-link" aria-label="Scroll to selected work"><Arrow down/></a></div>
+      </section>
 
-        <section className="section experience-section" id="experience">
-          <div className="wrap">
-            <p className="section-kicker">02 / Experience</p><div className="section-heading"><h2>Experience that bridges building and quality.</h2><p>Software delivery, integrations, and careful verification—grounded in real teams and requirements.</p></div>
-            <div className="timeline">
-              {experience.map((item, i) => <article className="timeline-item" key={item.role}>
-                <div className="timeline-marker"><span>{String(i + 1).padStart(2, "0")}</span></div>
-                <p className="period">{item.period}</p>
-                <div className="timeline-content"><p className="company">{item.company}</p><h3>{item.role}</h3><p>{item.summary}</p>{item.points.length > 0 && <ul>{item.points.map(p => <li key={p}>{p}</li>)}</ul>}</div>
-              </article>)}
-            </div>
+      <section className="section work-section" id="projects" aria-labelledby="work-heading">
+        <div className="wrap">
+          <div className="section-topline"><p className="eyebrow">01 / SELECTED WORK</p><span className="section-aside">IDEAS, BUILT INTO SOFTWARE</span></div>
+          <div className="section-heading"><h2 id="work-heading">A few things<br/>I’ve <em>put together.</em></h2><p>From reliable application backends to models that make predictions. Each project is a different way to connect the pieces.</p></div>
+          <div className="project-toolbar"><div className="project-filters" role="group" aria-label="Filter projects">{filters.map(value=><button key={value} aria-pressed={filter===value} onClick={()=>setFilter(value)}>{value}<span>{value==="All work" ? projects.length : projects.filter(p=>p.category===value).length}</span></button>)}</div><span className="project-count" role="status">{visibleProjects.length} projects</span></div>
+          <div className="project-grid">
+            {visibleProjects.map(project=><article key={project.id} className={"project-card "+(project.id==="01" ? "featured" : "")}>
+              <ProjectArtwork kind={project.visual}/>
+              <div className="project-body"><p className="project-category">{project.type}</p><h3>{project.name}</h3><p className="project-purpose">{project.purpose}</p><p className="project-description">{project.description}</p><ul className="tags" aria-label="Technologies">{project.stack.map(tag=><li key={tag}>{tag}</li>)}</ul><div className="project-actions"><ExternalLink href={project.github}>Explore the code</ExternalLink><span className="project-number">/{project.id}</span></div><details className="project-notes"><summary>Engineering notes<span aria-hidden="true">+</span></summary><dl>{project.notes.map(note=><div key={note.label}><dt>{note.label}</dt><dd>{note.text}</dd></div>)}</dl></details></div>
+            </article>)}
           </div>
-        </section>
+          <div className="work-footer"><span>More experiments, smaller builds, and work in progress.</span><ExternalLink href={links.github}>Find me on GitHub</ExternalLink></div>
+        </div>
+      </section>
 
-        <section className="section projects-section" id="projects">
-          <div className="wrap"><p className="section-kicker">03 / Selected work</p><div className="section-heading"><h2>Projects built around useful problems.</h2><p>Verified from the public source and documentation—no inflated metrics or invented features.</p></div>
-            <div className="projects-list">
-              {projects.map(project => <article className="project" key={project.name}>
-                <div className={`project-visual ${project.accent}`} aria-hidden="true"><span className="visual-index">{project.index}</span><div className="visual-lines"><i></i><i></i><i></i></div><b>{project.type}</b></div>
-                <div className="project-copy"><div className="project-top"><span>{project.index}</span><span>{project.type}</span></div><h3>{project.name}</h3><p className="purpose">{project.purpose}</p><p>{project.description}</p><div className="tags">{project.stack.map(tag => <span key={tag}>{tag}</span>)}</div><div className="project-links"><ExternalLink href={project.github}>View repository</ExternalLink>{project.live && <ExternalLink href={project.live}>Live application</ExternalLink>}</div></div>
-              </article>)}
-            </div>
-          </div>
-        </section>
+      <section className="section experience-section" id="experience" aria-labelledby="experience-heading">
+        <div className="wrap"><div className="section-topline"><p className="eyebrow">02 / EXPERIENCE</p><span className="section-aside">BUILDING. TESTING. LEARNING.</span></div>
+          <div className="section-heading"><h2 id="experience-heading">The work behind<br/><em>the work.</em></h2><p>Experience on both sides of delivery: building features and integrations, then checking that software behaves as it should.</p></div>
+          <div className="experience-list">{experience.map((item,i)=><article className="experience-item" key={item.company}><div className="experience-meta"><span className="experience-number">0{i+1}</span><p>{item.period}</p><span>{i===0 ? "Internship" : "Full-time"}</span></div><div className="experience-content"><div className="role-heading"><h3>{item.role}</h3><span>{item.company}</span></div><p>{item.summary}</p><ul>{item.points.map(point=><li key={point}>{point}</li>)}</ul><p className="experience-stack">{item.stack}</p></div></article>)}</div>
+          <div className="international-note"><span className="mini-label">BEYOND THE DESK / 2023–2024</span><p>Seasonal work programs in the <strong>USA and Germany</strong> taught me to adapt quickly, communicate clearly, and work with people from different backgrounds.</p></div>
+        </div>
+      </section>
 
-        <section className="section skills-section" id="skills"><div className="wrap"><p className="section-kicker">04 / Capabilities</p><div className="section-heading"><h2>Tools selected for the problem.</h2><p>A verified working stack across services, interfaces, data, and delivery.</p></div><div className="skills-grid">{skills.map((group, i) => <article className="skill-card" key={group.category}><span>0{i + 1}</span><h3>{group.category}</h3><div>{group.items.map(item => <b key={item}>{item}</b>)}</div></article>)}</div></div></section>
+      <section className="section about-section" id="about" aria-labelledby="about-heading">
+        <div className="wrap about-grid"><div className="about-intro"><p className="eyebrow">03 / A LITTLE ABOUT ME</p><h2 id="about-heading">Curious by nature.<br/><em>Engineer by choice.</em></h2><div className="about-monogram" aria-hidden="true">ap<span>✳</span></div><p className="location-note"><span className="tiny-dot"/>Based in Skopje, North Macedonia</p></div><div className="about-copy"><p className="large-copy">I like understanding how things work—and making them work a little better.</p><p>That curiosity takes me from APIs and database transactions to machine-learning pipelines and camera-based interfaces. I care about the connections: how data moves, how systems fail, and how people actually use what we build.</p><p>My QA background shapes the way I develop software. I think about edge cases, reproducible behavior, and the next person who will need to understand the code.</p><div className="education-block"><span className="mini-label">EDUCATION / OCT 2021 — SEP 2026</span><h3>BSc in Computer Science</h3><p>Faculty of Computer Science and Engineering (FINKI)<br/>Ss. Cyril and Methodius University in Skopje</p></div><div className="personal-details"><div><span className="mini-label">AWAY FROM THE EDITOR</span><p>Chess, football, hiking, and computer hardware.</p></div><div><span className="mini-label">LANGUAGES</span><p>Macedonian · Native<br/>English · Professional<br/>German · Basic</p></div></div></div></div>
+      </section>
 
-        <section className="section education"><div className="wrap education-grid"><div><p className="section-kicker">05 / Education</p><h2>Computer Science,<br />built on strong foundations.</h2></div><article><span className="education-year">2021 — 2026</span><h3>BSc in Computer Science</h3><p>Faculty of Computer Science and Engineering (FINKI)<br />Ss. Cyril and Methodius University in Skopje</p></article></div></section>
+      <section className="section skills-section" id="skills" aria-labelledby="skills-heading"><div className="wrap"><div className="section-topline"><p className="eyebrow">04 / TOOLKIT</p><span className="section-aside">THE RIGHT TOOL FOR THE PROBLEM</span></div><h2 id="skills-heading">Different tools.<br/><em>One engineering mindset.</em></h2><div className="skills-grid">{skills.map((skill,i)=><article key={skill.category}><span className="skill-number">0{i+1} /</span><h3>{skill.category}</h3><p>{skill.description}</p><ul>{skill.items.map(item=><li key={item}>{item}</li>)}</ul></article>)}</div></div></section>
 
-        <section className="contact" id="contact"><div className="wrap contact-inner"><p className="section-kicker">06 / Contact</p><h2>Let’s build something<br /><em>useful.</em></h2><p>I’m open to junior software engineering, full-stack, backend, .NET, and Java opportunities—as well as thoughtful collaboration on useful software.</p><a className="email-link" href={links.email}>puceskia@gmail.com <span aria-hidden="true">↗</span></a><div className="contact-meta"><span>Skopje, North Macedonia</span><ExternalLink href={links.github}>GitHub</ExternalLink><ExternalLink href={links.linkedin}>LinkedIn</ExternalLink></div></div></section>
-      </main>
-      <footer><div className="wrap"><span>Antonio Puceski</span><span>© {new Date().getFullYear()} · Software engineered with care.</span></div></footer>
-    </>
-  );
+      <section className="contact-section" id="contact" aria-labelledby="contact-heading"><div className="wrap"><div className="contact-top"><p className="eyebrow">05 / WHAT’S NEXT?</p><span className="availability"><span/>Open to opportunities</span></div><h2 id="contact-heading">Good software starts<br/>with a <em>conversation.</em><span className="contact-star" aria-hidden="true">✳</span></h2><div className="contact-bottom"><p>Have a software engineering role, an applied AI project,<br className="desktop-break"/> or an interesting problem in mind? I’d love to hear about it.</p><a className="contact-email" href={links.email}>puceskia@gmail.com <Arrow/></a></div><div className="contact-links"><div><ExternalLink href={links.linkedin}>LinkedIn</ExternalLink><ExternalLink href={links.github}>GitHub</ExternalLink><a href={links.email+"?subject=CV%20request"}>Request my CV <Arrow/></a></div><span>Skopje, North Macedonia · Open to collaboration</span></div></div></section>
+    </main>
+    <footer className="site-footer"><div className="wrap"><a className="wordmark" href="#top">antonio<span>.</span>puceski</a><span>© {new Date().getFullYear()} Antonio Puceski</span><a href="#top">Back to top <span aria-hidden="true">↑</span></a></div></footer>
+  </>;
 }

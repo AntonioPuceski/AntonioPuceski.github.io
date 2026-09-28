@@ -6,71 +6,108 @@ export const links = {
 
 export const experience = [
   {
-    period: "Mar 2026 — Aug 2026",
-    role: "Full-Stack Engineer Intern",
+    period: "Mar — Aug 2026",
+    role: "Software Engineer Intern",
     company: "Vestel",
-    summary: "Contributing to full-stack applications using C#, ASP.NET Core, Angular, Vue.js, PostgreSQL, SQL Server, and REST APIs.",
-    points: ["Improving data-processing reliability through atomic operations, duplicate prevention, model validation, and safer database and file handling.", "Supporting authentication, user management, administrative workflows, notifications, background services, integrations, and automated reporting.", "Collaborating with developers and stakeholders to troubleshoot issues and improve scalability, maintainability, monitoring, documentation, and user experience."],
+    summary: "Contributed to business applications and integrations across .NET services, Angular and Vue.js interfaces, and relational databases.",
+    points: [
+      "Built and improved authentication, user management, email workflows, validation, and public and administrative portal features on PakomakAds.",
+      "Supported role-based administration, indicator-management workflows, notifications, and documentation on the PAF platform.",
+      "Improved transaction processing, external integrations, background services, and automated reporting on Pakomak, with attention to atomic operations and duplicate prevention.",
+    ],
+    stack: "C# / ASP.NET Core / Angular / Vue.js / PostgreSQL / SQL Server",
   },
   {
     period: "Oct 2025 — Feb 2026",
     role: "QA Engineer",
     company: "Adbarcadero",
-    summary: "Performed functional, regression, and exploratory testing to uncover defects and usability issues.",
-    points: ["Documented reproducible defects with clear evidence and expected behaviour.", "Worked with developers to clarify issues, verify fixes, and reduce regressions."],
-  },
-  {
-    period: "2023 — 2024",
-    role: "International Work Experience",
-    company: "USA & Germany",
-    summary: "Completed two international work programmes, strengthening independence, adaptability, and professional communication in multicultural teams.",
-    points: [],
+    summary: "Tested software through functional, regression, and exploratory testing, identifying defects and usability issues.",
+    points: [
+      "Documented reproducible issues with clear steps, expected and actual results, and supporting evidence.",
+      "Worked with developers to clarify defects, verify fixes, and reduce regressions.",
+    ],
+    stack: "Functional testing / Regression testing / Exploratory testing",
   },
 ];
 
-export const projects = [
+export type ProjectCategory = "Software" | "Applied AI";
+export type ProjectVisual = "network" | "fitness" | "finance" | "vision" | "settle";
+
+export type Project = {
+  id: string;
+  name: string;
+  category: ProjectCategory;
+  type: string;
+  visual: ProjectVisual;
+  purpose: string;
+  description: string;
+  stack: string[];
+  github: string;
+  notes: { label: string; text: string }[];
+};
+
+export const projects: Project[] = [
   {
-    index: "01", name: "GymTracker", type: "Backend API", accent: "cyan",
-    purpose: "A dependable API for organising fitness data and tracking progress.",
-    description: "Supports exercise discovery, reusable workout plans, completed sessions, favourites, body-weight history, dashboard summaries, and synchronisation with the WGER exercise API.",
-    stack: ["C#", ".NET 10", "ASP.NET Core", "EF Core", "PostgreSQL"],
-    github: "https://github.com/AntonioPuceski/GymTracker",
-  },
-  {
-    index: "02", name: "Personal Finance Manager", type: "Full-stack application", accent: "blue",
-    purpose: "A clear way to record transactions and understand personal cash flow.",
-    description: "Provides transaction create, edit, and delete workflows, date-range filtering, dynamic balances, category summaries, and income-versus-expense visualisations.",
-    stack: ["Java", "Spring Boot", "React", "TypeScript", "PostgreSQL"],
-    github: "https://github.com/AntonioPuceski/-personal-finance-manager",
-    live: "https://personal-finance-manager-black.vercel.app/",
-  },
-  {
-    index: "03", name: "Smart Incident Detection", type: "Applied ML system", accent: "violet",
-    purpose: "An end-to-end prototype for classifying suspicious network traffic.",
-    description: "Preprocesses traffic data, trains and persists a Random Forest model, serves predictions through FastAPI, and presents class probabilities in a React dashboard.",
-    stack: ["Python", "scikit-learn", "FastAPI", "React", "Recharts"],
+    id: "01", name: "Smart Incident Detection", category: "Applied AI", type: "Machine learning · Network security", visual: "network",
+    purpose: "Taking a model beyond the notebook.",
+    description: "An end-to-end prototype that classifies network traffic and makes model predictions understandable through an interactive dashboard.",
+    stack: ["Python", "scikit-learn", "FastAPI", "React"],
     github: "https://github.com/AntonioPuceski/Smart-Incident-Detection-Dashboard-",
+    notes: [
+      { label: "The system", text: "Preprocess network-traffic features, train and evaluate a Random Forest classifier, persist the pipeline with joblib, and serve predictions through FastAPI." },
+      { label: "The interface", text: "A React dashboard accepts traffic features and visualizes predicted classes and probabilities with Recharts." },
+      { label: "The scope", text: "An applied machine-learning prototype using sampled CICIDS2018 data; not a deployed network-monitoring service." },
+    ],
   },
   {
-    index: "04", name: "Split Settle", type: "Collaborative web app", accent: "mint",
-    purpose: "A lightweight tool for tracking shared costs and settling group balances.",
-    description: "Creates shareable groups, records participants and expenses, calculates balances, suggests settlements, and synchronises changes through a Supabase-backed data layer.",
-    stack: ["React", "TypeScript", "Supabase", "PostgreSQL", "Vitest"],
-    github: "https://github.com/AntonioPuceski/Split-Settle-App",
+    id: "02", name: "GymTracker", category: "Software", type: "Software engineering · Fitness", visual: "fitness",
+    purpose: "A place for every workout—and the progress after it.",
+    description: "A fitness application for discovering exercises, building reusable workout plans, logging completed sessions, and tracking body weight.",
+    stack: ["C#", "ASP.NET Core", "EF Core", "PostgreSQL"],
+    github: "https://github.com/AntonioPuceski/GymTracker",
+    notes: [
+      { label: "The system", text: "An ASP.NET Core API serves a responsive web interface, with EF Core migrations and PostgreSQL persistence." },
+      { label: "The integration", text: "WGER synchronization brings exercise data into search, filtering, and favorites workflows. Dashboard summaries connect plans, sessions, and progress history." },
+      { label: "The scope", text: "A portfolio application. Browser profile keys separate demo records; they are not an authentication or authorization layer." },
+    ],
   },
   {
-    index: "05", name: "Computer Vision Sensor Hub", type: "Computer vision", accent: "orange",
-    purpose: "An experimental camera interface for human gestures and head direction.",
-    description: "Uses face and hand landmarks to recognise hand gestures, smiles, winks, eye closure, and head movement, with modes, event logging, and gesture counters.",
+    id: "03", name: "Personal Finance Manager", category: "Software", type: "Software engineering · Finance", visual: "finance",
+    purpose: "Making everyday finances easier to understand.",
+    description: "Record income and expenses, filter transactions by date, and explore balances, category summaries, and spending through visualizations.",
+    stack: ["Java", "Spring Boot", "React", "TypeScript"],
+    github: "https://github.com/AntonioPuceski/-personal-finance-manager",
+    notes: [
+      { label: "The system", text: "A Spring Boot REST API and JPA data layer support transaction creation, editing, deletion, and date-range queries." },
+      { label: "The interface", text: "The React and TypeScript client turns transaction data into balance summaries and income-versus-expense visualizations." },
+    ],
+  },
+  {
+    id: "04", name: "Computer Vision Sensor Hub", category: "Applied AI", type: "Computer vision · Human interaction", visual: "vision",
+    purpose: "Turning a camera into an input device.",
+    description: "An experiment in recognizing hand gestures, facial gestures, and head direction using a laptop camera and landmark tracking.",
     stack: ["Python", "OpenCV", "MediaPipe"],
     github: "https://github.com/AntonioPuceski/Python-camera-sensor-project",
+    notes: [
+      { label: "The system", text: "OpenCV and MediaPipe track hand and face landmarks to identify gestures such as a thumbs-up, a smile, a wink, and head movement." },
+      { label: "The interaction", text: "Gesture counters, event logging, and FREE, GAME, and MENU modes explore how camera input can drive an interface. Results depend on lighting and gesture thresholds." },
+    ],
+  },
+  {
+    id: "05", name: "Split Settle", category: "Software", type: "Collaborative software · Shared expenses", visual: "settle",
+    purpose: "Shared expenses, with less back-and-forth.",
+    description: "Create a group, record expenses, and work out who owes what. Shareable groups and synchronized balances keep everyone on the same page.",
+    stack: ["React", "TypeScript", "Supabase", "PostgreSQL"],
+    github: "https://github.com/AntonioPuceski/Split-Settle-App",
+    notes: [
+      { label: "The system", text: "A Supabase-backed data layer stores groups, participants, expenses, and settlements, with real-time synchronization for shared groups." },
+      { label: "The workflow", text: "Record payments, calculate individual balances, review suggested settlements, and track debts as they are paid." },
+    ],
   },
 ];
 
 export const skills = [
-  { category: "Backend", items: ["C#", "ASP.NET Core", "Java", "Spring Boot", "REST APIs", "Entity Framework Core", "JPA", "FastAPI", "Express"] },
-  { category: "Frontend", items: ["TypeScript", "JavaScript", "Angular", "React", "Vue.js", "React Native"] },
-  { category: "Databases", items: ["PostgreSQL", "SQL Server", "MySQL", "H2"] },
-  { category: "Tools & delivery", items: ["Git", "GitHub", "Docker", "Jira", "Swagger / OpenAPI"] },
-  { category: "Data & applied AI", items: ["Python", "pandas", "scikit-learn", "OpenCV", "MediaPipe"] },
+  { category: "Software & systems", description: "Services, integrations, and the data behind them.", items: ["C# / .NET", "Java / Spring Boot", "REST APIs", "EF Core / JPA", "PostgreSQL", "SQL Server"] },
+  { category: "Applied AI & data", description: "From data preparation to predictions people can use.", items: ["Python", "pandas", "scikit-learn", "FastAPI", "OpenCV", "MediaPipe"] },
+  { category: "Interfaces & delivery", description: "Usable clients, clear collaboration, and careful verification.", items: ["TypeScript", "React / Angular / Vue", "React Native", "Git / Docker", "Swagger / OpenAPI", "Jira / QA"] },
 ];
