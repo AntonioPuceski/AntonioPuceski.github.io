@@ -11,7 +11,7 @@
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "test": "node --test tests/rendered-html.test.mjs",
-    "lint": "eslint src app/portfolio.tsx app/data.ts vite.config.ts"
+    "lint": "eslint src app/portfolio.tsx app/portfolio-map.tsx app/data.ts vite.config.ts"
   },
   "dependencies": {
     "react": "19.2.6",

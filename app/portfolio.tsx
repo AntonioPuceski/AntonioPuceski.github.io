@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { PortfolioMap } from "./portfolio-map";
 import { experience, links, projects, skills, type ProjectVisual } from "./data";
 
 const navigation = [["projects", "Work"], ["experience", "Experience"], ["about", "About"], ["contact", "Contact"]];
@@ -77,17 +78,9 @@ export function Portfolio() {
             <h1 id="hero-heading">Thoughtful<br/>software.<br/><em>Practical AI.</em></h1>
             <p className="hero-intro">I’m Antonio. I build understandable systems<br className="desktop-break"/> and put machine learning to work.</p>
             <p className="hero-support">Software engineering graduate with experience in .NET applications, integrations, and quality assurance. Exploring what thoughtful engineering and applied AI can do together.</p>
-            <div className="hero-actions"><a className="button button-primary" href="#projects">Explore my work <Arrow down/></a><a className="text-link" href="#experience">My experience <Arrow/></a></div>
+            <div className="hero-actions"><a className="button button-primary" href="#explore">Play the portfolio <Arrow down/></a><a className="text-link" href="#projects">Browse my work <Arrow/></a></div>
           </div>
-          <div className="hero-aside">
-            <div className="portrait-frame">
-              <div className="portrait-grid" aria-hidden="true"/>
-              <span className="portrait-cross" aria-hidden="true">+</span>
-              <img src="/antonio-puceski-portrait.png" alt="Antonio Puceski" width="1024" height="1536" fetchPriority="high"/>
-              <div className="portrait-caption"><span>ANTONIO PUCESKI</span><span>SKOPJE, MK ↗</span></div>
-            </div>
-            <div className="focus-note"><span className="focus-symbol" aria-hidden="true">↔</span><div><span className="mini-label">WHERE MY INTERESTS MEET</span><strong>Software & intelligence.</strong></div><span className="focus-spark" aria-hidden="true">✳</span></div>
-          </div>
+          <div className="hero-aside"><PortfolioMap/><div className="hero-profile"><img src="/antonio-puceski-portrait.png" alt="Antonio Puceski" width="56" height="56"/><div><strong>Antonio Puceski</strong><span>Software Engineer / Skopje, MK</span></div></div></div>
         </div>
         <div className="hero-bottom"><p>Built on fundamentals.<br/><strong>Driven by curiosity.</strong></p><div className="hero-technologies" aria-label="Core technologies"><span>C# / .NET</span><span>Python</span><span>TypeScript</span><span>Java</span><span>SQL</span></div><a href="#projects" className="scroll-link" aria-label="Scroll to selected work"><Arrow down/></a></div>
       </section>
