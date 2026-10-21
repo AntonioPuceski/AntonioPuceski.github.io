@@ -33,12 +33,21 @@ export const experience = [
 export type ProjectCategory = "Software" | "Applied AI";
 export type ProjectVisual = "network" | "fitness" | "finance" | "vision" | "settle";
 
+export type ProjectMedia = {
+  label: string;
+  disclosure: string;
+  images: { src: string; caption: string }[];
+  video: string;
+  videoCaption: string;
+};
+
 export type Project = {
   id: string;
   name: string;
   category: ProjectCategory;
   type: string;
   visual: ProjectVisual;
+  media?: ProjectMedia;
   purpose: string;
   description: string;
   stack: string[];
@@ -48,19 +57,19 @@ export type Project = {
 
 export const projects: Project[] = [
   {
-    id: "01", name: "Smart Incident Detection", category: "Applied AI", type: "Machine learning · Network security", visual: "network",
+    id: "01", media: {"label": "API-backed prototype", "disclosure": "Captured from the running app. The saved model contains only the Attack class; these predictions do not demonstrate reliable benign/attack discrimination.", "images": [{"src": "/projects/incident/input-form.jpg", "caption": "Traffic feature input"}, {"src": "/projects/incident/prediction.jpg", "caption": "Prediction and class probability"}, {"src": "/projects/incident/result-detail.jpg", "caption": "Prediction details"}, {"src": "/projects/incident/api-docs.jpg", "caption": "FastAPI endpoint documentation"}], "video": "/projects/incident/demo.mp4", "videoCaption": "12-second slideshow of captured interface states."}, name: "Smart Incident Detection", category: "Applied AI", type: "Machine learning · Network security", visual: "network",
     purpose: "Taking a model beyond the notebook.",
-    description: "An end-to-end prototype that classifies network traffic and makes model predictions understandable through an interactive dashboard.",
+    description: "A network-traffic inference prototype connecting a saved classifier to an interactive dashboard, with visible model limitations.",
     stack: ["Python", "scikit-learn", "FastAPI", "React"],
     github: "https://github.com/AntonioPuceski/Smart-Incident-Detection-Dashboard-",
     notes: [
-      { label: "The system", text: "Preprocess network-traffic features, train and evaluate a Random Forest classifier, persist the pipeline with joblib, and serve predictions through FastAPI." },
+      { label: "The system", text: "A FastAPI service loads a saved Random Forest classifier with joblib and serves predictions to a React dashboard. Training experiments are retained in the notebook." },
       { label: "The interface", text: "A React dashboard accepts traffic features and visualizes predicted classes and probabilities with Recharts." },
-      { label: "The scope", text: "An applied machine-learning prototype using sampled CICIDS2018 data; not a deployed network-monitoring service." },
+      { label: "The scope", text: "The saved artifact contains only the Attack class and needs retraining before meaningful benign/attack classification. This is an inference prototype, not a deployed intrusion detector." },
     ],
   },
   {
-    id: "02", name: "GymTracker", category: "Software", type: "Software engineering · Fitness", visual: "fitness",
+    id: "02", media: {"label": "Fictional demo data", "disclosure": "Captured from the real frontend using fictional fixture responses. These previews do not demonstrate a connected PostgreSQL backend.", "images": [{"src": "/projects/gym/dashboard.jpg", "caption": "Workout dashboard"}, {"src": "/projects/gym/exercises.jpg", "caption": "Exercise library"}, {"src": "/projects/gym/plans.jpg", "caption": "Reusable workout plans"}, {"src": "/projects/gym/log-workout.jpg", "caption": "Logging a workout"}, {"src": "/projects/gym/progress.jpg", "caption": "Body-weight progress"}], "video": "/projects/gym/demo.mp4", "videoCaption": "20-second slideshow of captured screens with sample data."}, name: "GymTracker", category: "Software", type: "Software engineering · Fitness", visual: "fitness",
     purpose: "A place for every workout—and the progress after it.",
     description: "A fitness application for discovering exercises, building reusable workout plans, logging completed sessions, and tracking body weight.",
     stack: ["C#", "ASP.NET Core", "EF Core", "PostgreSQL"],
@@ -83,7 +92,7 @@ export const projects: Project[] = [
     ],
   },
   {
-    id: "04", name: "Computer Vision Sensor Hub", category: "Applied AI", type: "Computer vision · Human interaction", visual: "vision",
+    id: "04", media: {"label": "Simulated input", "disclosure": "Original OpenCV interface and gesture rules with synthetic landmarks. No webcam or MediaPipe inference was used for this preview.", "images": [{"src": "/projects/sensor/game.jpg", "caption": "Game mode with a synthetic peace gesture"}, {"src": "/projects/sensor/free.jpg", "caption": "Free mode and gesture counters"}, {"src": "/projects/sensor/paused.jpg", "caption": "Paused game"}, {"src": "/projects/sensor/menu.jpg", "caption": "Gesture-controlled menu"}], "video": "/projects/sensor/preview.mp4", "videoCaption": "16-second slideshow of offline rendered interface states."}, name: "Computer Vision Sensor Hub", category: "Applied AI", type: "Computer vision · Human interaction", visual: "vision",
     purpose: "Turning a camera into an input device.",
     description: "An experiment in recognizing hand gestures, facial gestures, and head direction using a laptop camera and landmark tracking.",
     stack: ["Python", "OpenCV", "MediaPipe"],
@@ -104,6 +113,20 @@ export const projects: Project[] = [
       { label: "The workflow", text: "Record payments, calculate individual balances, review suggested settlements, and track debts as they are paid." },
     ],
   },
+  {
+    id: "06", name: "Live Flight Tracker", category: "Software", type: "Real-time systems · Geospatial visualization", visual: "network",
+    purpose: "A live view of the skies above Europe.",
+    description: "Explore altitude-aware aircraft positions, search callsigns and inspect reported telemetry on an interactive WebGL map.",
+    stack: ["React", "TypeScript", "deck.gl", "FastAPI", "WebSockets"],
+    github: "https://github.com/AntonioPuceski/live-flight-tracker",
+    media: {"label": "Recorded live data", "disclosure": "Captured with live OpenSky data. This is a recorded demonstration, not a live feed; flight positions and counts change over time.", "images": [{"src": "/projects/flights/overview.jpg", "caption": "European air traffic overview"}, {"src": "/projects/flights/search.jpg", "caption": "Callsign search"}, {"src": "/projects/flights/telemetry.jpg", "caption": "Selected-flight telemetry"}], "video": "/projects/flights/demo.mp4", "videoCaption": "Silent edited browser capture of the overview, search and telemetry."},
+    notes: [
+      { label: "The data flow", text: "A FastAPI polling loop shares OpenSky state vectors with browsers over WebSockets. deck.gl renders aircraft and recent trails." },
+      { label: "The motion", text: "Client-side dead reckoning projects speed and heading between snapshots, then corrects positions as fresh reports arrive. Projection stops when data becomes stale." },
+      { label: "The scope", text: "An exploratory visualization using public telemetry, with missing measurements marked unavailable. The preview is a recording, not a live feed or navigation tool." },
+    ],
+  },
+
 ];
 
 export const skills = [

@@ -22,3 +22,14 @@ test("publishes accurate metadata and verified projects", () => {
   }
   assert.doesNotMatch(page, /Expected completion: September 2026/);
 });
+
+test("all referenced project media exists and is nonempty", async () => {
+  const { stat } = await import("node:fs/promises");
+  const assets = [...data.matchAll(/"(\/projects\/[^\"]+\.(?:jpg|mp4))"/g)].map(match => match[1]);
+  assert.ok(assets.length >= 20, "Expected project screenshots and videos");
+  for (const asset of assets) {
+    const info = await stat(new URL(`../public${asset}`, import.meta.url));
+    assert.ok(info.size > 0, `${asset} is empty`);
+  }
+  assert.match(data, /Live Flight Tracker/);
+});

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { PortfolioMap } from "./portfolio-map";
-import { experience, links, projects, skills, type ProjectVisual } from "./data";
+import { experience, links, projects, skills, type ProjectVisual, type ProjectMedia } from "./data";
 
 const navigation = [["projects", "Work"], ["experience", "Experience"], ["about", "About"], ["contact", "Contact"]];
 const filters = ["All work", "Software", "Applied AI"] as const;
@@ -31,6 +31,53 @@ function ProjectArtwork({ kind }: { kind: ProjectVisual }) {
   if (kind === "vision") return <div className="artwork vision-art" aria-hidden="true"><div className="artwork-label">SENSOR HUB<span>04 / VISION</span></div><svg className="vision-drawing" viewBox="0 0 500 210" fill="none"><path d="M128 55V25h35m174 0h35v30m0 100v30h-35m-174 0h-35v-30" stroke="currentColor" opacity=".5"/><path d="m207 162-29-50q-9-20 4-20l26 29-12-73q-2-15 9-14l20 77-1-90q0-15 11-13l12 100 10-77q2-15 12-10l-1 92 17-59q4-13 14-6l-12 102-27 33z" stroke="currentColor" opacity=".55"/><g stroke="currentColor" strokeWidth="1.5"><path d="m231 171-23-50-26-24m49 74-12-74-13-54m25 128 12-70-8-82m-4 152 32-66 4-72m-36 138 51-61 11-45m-85 56 11-24 24 4 20 4 19 5"/></g><g fill="currentColor">{[[231,171],[208,121],[182,97],[219,97],[206,43],[243,101],[235,19],[263,105],[267,33],[282,110],[293,65]].map(([cx,cy])=><circle key={cx} cx={cx} cy={cy} r="4"/>)}</g></svg><div className="artwork-bottom"><span>CAMERA → LANDMARKS → GESTURE</span><span>Tracking illustration</span></div></div>;
   return <div className="artwork settle-art" aria-hidden="true"><div className="artwork-label">SPLIT SETTLE<span>05 / SOFTWARE</span></div><div className="settle-illustration"><span className="person-node">A</span><span className="person-node">B</span><span className="person-node">C</span><svg viewBox="0 0 360 140" fill="none"><path d="M55 8v55h250V8M180 8v116" stroke="currentColor" opacity=".4"/><circle cx="180" cy="63" r="5" fill="currentColor"/></svg><strong>One shared balance.</strong></div><div className="artwork-bottom"><span>SHARE / CALCULATE / SETTLE</span><span>Workflow overview</span></div></div>;
 }
+
+function ProjectMediaPreview({ media, name }: { media: ProjectMedia; name: string }) {
+  const dialog = useRef<HTMLDialogElement>(null);
+  const trigger = useRef<HTMLButtonElement>(null);
+  const [open, setOpen] = useState(false);
+  const [selected, setSelected] = useState(0);
+  const isVideo = selected === media.images.length;
+
+  useEffect(() => {
+    if (!open) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = previous; };
+  }, [open]);
+
+  function show() {
+    setSelected(0);
+    setOpen(true);
+    dialog.current?.showModal();
+  }
+
+  return <>
+    <button ref={trigger} className="project-preview" onClick={show} aria-label={`View ${name} screenshots and demo`} aria-haspopup="dialog">
+      <span className="project-preview-image"><img src={media.images[0].src} alt={media.images[0].caption} loading="lazy" decoding="async" width="1280" height="720" /></span>
+      <span className="project-preview-footer"><span>{media.label}</span><strong>View demo <span aria-hidden="true">↗</span></strong></span>
+    </button>
+    <dialog ref={dialog} className="project-gallery" aria-label={`${name} media gallery`} onClose={() => { setOpen(false); trigger.current?.focus(); }}>
+      {open && <div className="gallery-content">
+        <div className="gallery-heading"><div><p className="eyebrow">PROJECT PREVIEW</p><h2>{name}</h2></div><button className="gallery-close" onClick={() => dialog.current?.close()} aria-label="Close project preview">Close <span aria-hidden="true">×</span></button></div>
+        <p className="gallery-disclosure">{media.disclosure}</p>
+        <figure className="gallery-figure">
+          {isVideo ? <video key={media.video} controls playsInline preload="none" poster={media.images[0].src} aria-label={`${name} recorded demo`}>
+            <source src={media.video} type="video/mp4" />
+            <track kind="captions" src="/projects/silent.vtt" srcLang="en" label="Silent preview" />
+            Your browser does not support embedded video. <a href={media.video}>Download the demo</a>.
+          </video> : <img src={media.images[selected].src} alt={media.images[selected].caption} width="1280" height="720" />}
+          <figcaption aria-live="polite">{isVideo ? media.videoCaption : `${selected + 1} / ${media.images.length} — ${media.images[selected].caption}`}</figcaption>
+        </figure>
+        <div className="gallery-controls" role="group" aria-label="Choose a preview">
+          {media.images.map((item, index) => <button key={item.src} aria-pressed={selected === index} onClick={() => setSelected(index)}>{index + 1}. {item.caption}</button>)}
+          <button aria-pressed={isVideo} onClick={() => setSelected(media.images.length)}>Watch video</button>
+        </div>
+      </div>}
+    </dialog>
+  </>;
+}
+
 
 export function Portfolio() {
   const [dark, setDark] = useState(() => document.documentElement.dataset.theme === "dark");
@@ -91,8 +138,8 @@ export function Portfolio() {
           <div className="section-heading"><h2 id="work-heading">A few things<br/>I’ve <em>put together.</em></h2><p>From reliable application backends to models that make predictions. Each project is a different way to connect the pieces.</p></div>
           <div className="project-toolbar"><div className="project-filters" role="group" aria-label="Filter projects">{filters.map(value=><button key={value} aria-pressed={filter===value} onClick={()=>setFilter(value)}>{value}<span>{value==="All work" ? projects.length : projects.filter(p=>p.category===value).length}</span></button>)}</div><span className="project-count" role="status">{visibleProjects.length} projects</span></div>
           <div className="project-grid">
-            {visibleProjects.map(project=><article key={project.id} className={"project-card "+(project.id==="01" ? "featured" : "")}>
-              <ProjectArtwork kind={project.visual}/>
+            {visibleProjects.map(project=><article key={project.id} className={"project-card "+((project.id==="01" || project.id==="06") ? "featured" : "")}>
+              {project.media ? <ProjectMediaPreview media={project.media} name={project.name}/> : <ProjectArtwork kind={project.visual}/>}
               <div className="project-body"><p className="project-category">{project.type}</p><h3>{project.name}</h3><p className="project-purpose">{project.purpose}</p><p className="project-description">{project.description}</p><ul className="tags" aria-label="Technologies">{project.stack.map(tag=><li key={tag}>{tag}</li>)}</ul><div className="project-actions"><ExternalLink href={project.github}>Explore the code</ExternalLink><span className="project-number">/{project.id}</span></div><details className="project-notes"><summary>Engineering notes<span aria-hidden="true">+</span></summary><dl>{project.notes.map(note=><div key={note.label}><dt>{note.label}</dt><dd>{note.text}</dd></div>)}</dl></details></div>
             </article>)}
           </div>
