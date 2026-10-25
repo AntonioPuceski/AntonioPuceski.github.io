@@ -10,7 +10,7 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "test": "node --test tests/rendered-html.test.mjs",
+    "test": "node --test tests/*.test.mjs",
     "lint": "eslint src app/portfolio.tsx app/portfolio-map.tsx app/data.ts vite.config.ts"
   },
   "dependencies": {

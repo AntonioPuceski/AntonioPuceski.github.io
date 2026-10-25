@@ -10,7 +10,7 @@ function Arrow({ down = false }: { down?: boolean }) {
 }
 
 function ExternalLink({ href, children, className = "" }: { href: string; children: ReactNode; className?: string }) {
-  return <a className={className} href={href} target="_blank" rel="noreferrer">{children}<Arrow /><span className="sr-only"> (opens in a new tab)</span></a>;
+  return <a data-analytics={href.includes("linkedin.com") ? "link-linkedin" : `link-github-${href.split("/").filter(Boolean).pop()}`} className={className} href={href} target="_blank" rel="noreferrer">{children}<Arrow /><span className="sr-only"> (opens in a new tab)</span></a>;
 }
 
 function ProjectArtwork({ kind }: { kind: ProjectVisual }) {
@@ -53,7 +53,7 @@ function ProjectMediaPreview({ media, name }: { media: ProjectMedia; name: strin
   }
 
   return <>
-    <button ref={trigger} className="project-preview" onClick={show} aria-label={`View ${name} screenshots and demo`} aria-haspopup="dialog">
+    <button data-analytics={`preview-${name}`} ref={trigger} className="project-preview" onClick={show} aria-label={`View ${name} screenshots and demo`} aria-haspopup="dialog">
       <span className="project-preview-image"><img src={media.images[0].src} alt={media.images[0].caption} loading="lazy" decoding="async" width="1280" height="720" /></span>
       <span className="project-preview-footer"><span>{media.label}</span><strong>View demo <span aria-hidden="true">↗</span></strong></span>
     </button>
@@ -70,8 +70,8 @@ function ProjectMediaPreview({ media, name }: { media: ProjectMedia; name: strin
           <figcaption aria-live="polite">{isVideo ? media.videoCaption : `${selected + 1} / ${media.images.length} — ${media.images[selected].caption}`}</figcaption>
         </figure>
         <div className="gallery-controls" role="group" aria-label="Choose a preview">
-          {media.images.map((item, index) => <button key={item.src} aria-pressed={selected === index} onClick={() => setSelected(index)}>{index + 1}. {item.caption}</button>)}
-          <button aria-pressed={isVideo} onClick={() => setSelected(media.images.length)}>Watch video</button>
+          {media.images.map((item, index) => <button data-analytics={`screenshot-${name}-${index + 1}`} key={item.src} aria-pressed={selected === index} onClick={() => setSelected(index)}>{index + 1}. {item.caption}</button>)}
+          <button data-analytics={`video-select-${name}`} aria-pressed={isVideo} onClick={() => setSelected(media.images.length)}>Watch video</button>
         </div>
       </div>}
     </dialog>
@@ -105,13 +105,13 @@ export function Portfolio() {
       <div className="wrap header-inner">
         <a className="wordmark" href="#top" aria-label="Antonio Puceski, home">antonio<span>.</span><span className="wordmark-surname">puceski</span></a>
         <nav id="navigation" className={menu ? "navigation is-open" : "navigation"} aria-label="Main navigation">
-          {navigation.map(([id, label]) => <a key={id} href={"#"+id} onClick={() => setMenu(false)}>{label}</a>)}
+          {navigation.map(([id, label]) => <a data-analytics={`nav-${id}`} key={id} href={"#"+id} onClick={() => setMenu(false)}>{label}</a>)}
         </nav>
         <div className="header-actions">
           <button className="theme-button" onClick={() => setDark(!dark)} aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}>
             {dark ? <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 1v3m0 16v3M1 12h3m16 0h3M4 4l2 2m12 12 2 2M4 20l2-2M18 6l2-2"/></svg> : <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M20 15.7A8.6 8.6 0 0 1 8.3 4a8.6 8.6 0 1 0 11.7 11.7Z"/></svg>}
           </button>
-          <a href={links.email} className="header-contact">Let’s talk <Arrow /></a>
+          <a data-analytics="contact-header-email" href={links.email} className="header-contact">Let’s talk <Arrow /></a>
           <button ref={menuButton} className="menu-button" aria-expanded={menu} aria-controls="navigation" onClick={() => setMenu(!menu)}>{menu ? "Close" : "Menu"}<span aria-hidden="true">{menu ? "−" : "+"}</span></button>
         </div>
       </div>
@@ -125,7 +125,7 @@ export function Portfolio() {
             <h1 id="hero-heading">Thoughtful<br/>software.<br/><em>Practical AI.</em></h1>
             <p className="hero-intro">I’m Antonio. I build understandable systems<br className="desktop-break"/> and put machine learning to work.</p>
             <p className="hero-support">Software engineering graduate with experience in .NET applications, integrations, and quality assurance. Exploring what thoughtful engineering and applied AI can do together.</p>
-            <div className="hero-actions"><a className="button button-primary" href="#explore">Play the portfolio <Arrow down/></a><a className="text-link" href="#projects">Browse my work <Arrow/></a></div>
+            <div className="hero-actions"><a data-analytics="hero-play-portfolio" className="button button-primary" href="#explore">Play the portfolio <Arrow down/></a><a data-analytics="hero-browse-work" className="text-link" href="#projects">Browse my work <Arrow/></a></div>
           </div>
           <div className="hero-aside"><PortfolioMap/><div className="hero-profile"><img src="/antonio-puceski-portrait.png" alt="Antonio Puceski" width="56" height="56"/><div><strong>Antonio Puceski</strong><span>Software Engineer / Skopje, MK</span></div></div></div>
         </div>
@@ -136,11 +136,11 @@ export function Portfolio() {
         <div className="wrap">
           <div className="section-topline"><p className="eyebrow">01 / SELECTED WORK</p><span className="section-aside">IDEAS, BUILT INTO SOFTWARE</span></div>
           <div className="section-heading"><h2 id="work-heading">A few things<br/>I’ve <em>put together.</em></h2><p>From reliable application backends to models that make predictions. Each project is a different way to connect the pieces.</p></div>
-          <div className="project-toolbar"><div className="project-filters" role="group" aria-label="Filter projects">{filters.map(value=><button key={value} aria-pressed={filter===value} onClick={()=>setFilter(value)}>{value}<span>{value==="All work" ? projects.length : projects.filter(p=>p.category===value).length}</span></button>)}</div><span className="project-count" role="status">{visibleProjects.length} projects</span></div>
+          <div className="project-toolbar"><div className="project-filters" role="group" aria-label="Filter projects">{filters.map(value=><button data-analytics={`filter-${value}`} key={value} aria-pressed={filter===value} onClick={()=>setFilter(value)}>{value}<span>{value==="All work" ? projects.length : projects.filter(p=>p.category===value).length}</span></button>)}</div><span className="project-count" role="status">{visibleProjects.length} projects</span></div>
           <div className="project-grid">
             {visibleProjects.map(project=><article key={project.id} className={"project-card "+((project.id==="01" || project.id==="06") ? "featured" : "")}>
               {project.media ? <ProjectMediaPreview media={project.media} name={project.name}/> : <ProjectArtwork kind={project.visual}/>}
-              <div className="project-body"><p className="project-category">{project.type}</p><h3>{project.name}</h3><p className="project-purpose">{project.purpose}</p><p className="project-description">{project.description}</p><ul className="tags" aria-label="Technologies">{project.stack.map(tag=><li key={tag}>{tag}</li>)}</ul><div className="project-actions"><ExternalLink href={project.github}>Explore the code</ExternalLink><span className="project-number">/{project.id}</span></div><details className="project-notes"><summary>Engineering notes<span aria-hidden="true">+</span></summary><dl>{project.notes.map(note=><div key={note.label}><dt>{note.label}</dt><dd>{note.text}</dd></div>)}</dl></details></div>
+              <div className="project-body"><p className="project-category">{project.type}</p><h3>{project.name}</h3><p className="project-purpose">{project.purpose}</p><p className="project-description">{project.description}</p><ul className="tags" aria-label="Technologies">{project.stack.map(tag=><li key={tag}>{tag}</li>)}</ul><div className="project-actions"><ExternalLink href={project.github}>Explore the code</ExternalLink><span className="project-number">/{project.id}</span></div><details className="project-notes"><summary data-analytics={`notes-${project.name}`}>Engineering notes<span aria-hidden="true">+</span></summary><dl>{project.notes.map(note=><div key={note.label}><dt>{note.label}</dt><dd>{note.text}</dd></div>)}</dl></details></div>
             </article>)}
           </div>
           <div className="work-footer"><span>More experiments, smaller builds, and work in progress.</span><ExternalLink href={links.github}>Find me on GitHub</ExternalLink></div>
@@ -161,8 +161,9 @@ export function Portfolio() {
 
       <section className="section skills-section" id="skills" aria-labelledby="skills-heading"><div className="wrap"><div className="section-topline"><p className="eyebrow">04 / TOOLKIT</p><span className="section-aside">THE RIGHT TOOL FOR THE PROBLEM</span></div><h2 id="skills-heading">Different tools.<br/><em>One engineering mindset.</em></h2><div className="skills-grid">{skills.map((skill,i)=><article key={skill.category}><span className="skill-number">0{i+1} /</span><h3>{skill.category}</h3><p>{skill.description}</p><ul>{skill.items.map(item=><li key={item}>{item}</li>)}</ul></article>)}</div></div></section>
 
-      <section className="contact-section" id="contact" aria-labelledby="contact-heading"><div className="wrap"><div className="contact-top"><p className="eyebrow">05 / WHAT’S NEXT?</p><span className="availability"><span/>Open to opportunities</span></div><h2 id="contact-heading">Good software starts<br/>with a <em>conversation.</em><span className="contact-star" aria-hidden="true">✳</span></h2><div className="contact-bottom"><p>Have a software engineering role, an applied AI project,<br className="desktop-break"/> or an interesting problem in mind? I’d love to hear about it.</p><a className="contact-email" href={links.email}>puceskia@gmail.com <Arrow/></a></div><div className="contact-links"><div><ExternalLink href={links.linkedin}>LinkedIn</ExternalLink><ExternalLink href={links.github}>GitHub</ExternalLink><a href={links.email+"?subject=CV%20request"}>Request my CV <Arrow/></a></div><span>Skopje, North Macedonia · Open to collaboration</span></div></div></section>
+      <section className="contact-section" id="contact" aria-labelledby="contact-heading"><div className="wrap"><div className="contact-top"><p className="eyebrow">05 / WHAT’S NEXT?</p><span className="availability"><span/>Open to opportunities</span></div><h2 id="contact-heading">Good software starts<br/>with a <em>conversation.</em><span className="contact-star" aria-hidden="true">✳</span></h2><div className="contact-bottom"><p>Have a software engineering role, an applied AI project,<br className="desktop-break"/> or an interesting problem in mind? I’d love to hear about it.</p><a data-analytics="contact-email" className="contact-email" href={links.email}>puceskia@gmail.com <Arrow/></a></div><div className="contact-links"><div><ExternalLink href={links.linkedin}>LinkedIn</ExternalLink><ExternalLink href={links.github}>GitHub</ExternalLink><a data-analytics="request-cv" href={links.email+"?subject=CV%20request"}>Request my CV <Arrow/></a></div><span>Skopje, North Macedonia · Open to collaboration</span></div></div></section>
     </main>
-    <footer className="site-footer"><div className="wrap"><a className="wordmark" href="#top">antonio<span>.</span>puceski</a><span>© {new Date().getFullYear()} Antonio Puceski</span><a href="#top">Back to top <span aria-hidden="true">↑</span></a></div></footer>
+    <footer className="site-footer"><div className="wrap"><a className="wordmark" href="#top">antonio<span>.</span>puceski</a><span>© {new Date().getFullYear()} Antonio Puceski</span><a href="/privacy.html">Privacy & analytics</a><a href="#top">Back to top <span aria-hidden="true">↑</span></a></div></footer>
   </>;
 }
+
